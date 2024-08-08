@@ -2,14 +2,10 @@
 pragma solidity ^0.8.0;
 import "./campaign.sol";
 import "./ngoRegistry.sol";
-import "./donorsRegistry.sol";
+import "./donorRegistry.sol";
 
 contract CampaignFactory {
-    event CampaignCreated(
-        uint goal,
-        address benefitedNGO,
-        address campaignAddress
-    );
+    event CampaignCreated(string name, string description,uint goal, address benefitedNGO, address campaignAddress);
     address[] public campaigns;
     mapping(address => bool) public activeCampaign;
     NGORegistry public ngoRegistry;
@@ -40,7 +36,7 @@ contract CampaignFactory {
         );
         campaigns.push(address(newCampaign));
         activeCampaign[address(newCampaign)] = true;
-        emit CampaignCreated(goal, msg.sender, address(newCampaign));
+        emit CampaignCreated(name, description, goal, msg.sender, address(newCampaign));
     }
 
     function getActiveCampaigns() public view returns (address[] memory) {
