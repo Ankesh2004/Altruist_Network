@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
-
 import "./campaign.sol";
 import "./ngoRegistry.sol";
-import "./donorRegistry.sol";
+import "./donorsRegistry.sol";
 
 contract CampaignFactory {
-    event CampaignCreated(uint goal, address benefitedNGO, address campaignAddress);
-
+    event CampaignCreated(
+        uint goal,
+        address benefitedNGO,
+        address campaignAddress
+    );
     address[] public campaigns;
     mapping(address => bool) public activeCampaign;
-
     NGORegistry public ngoRegistry;
     DonorRegistry public donorRegistry;
 
@@ -19,11 +20,24 @@ contract CampaignFactory {
         donorRegistry = DonorRegistry(donorRegistryAddress);
     }
 
-    function createCampaign(uint goal) public {
+    function createCampaign(
+        string memory name,
+        string memory description,
+        uint goal
+    ) public {
         require(ngoRegistry.isRegisteredNGO(msg.sender), "NGO not registered");
-        require(!donorRegistry.isRegisteredDonor(msg.sender), "Donor cannot create campaign");
+        require(
+            !donorRegistry.isRegisteredDonor(msg.sender),
+            "Donor cannot create campaign"
+        );
         require(goal > 0, "Goal should be greater than 0");
-        Campaign newCampaign = new Campaign(goal, payable(msg.sender), address(donorRegistry));
+        Campaign newCampaign = new Campaign(
+            name,
+            description,
+            goal,
+            payable(msg.sender),
+            address(donorRegistry)
+        );
         campaigns.push(address(newCampaign));
         activeCampaign[address(newCampaign)] = true;
         emit CampaignCreated(goal, msg.sender, address(newCampaign));
@@ -32,14 +46,12 @@ contract CampaignFactory {
     function getActiveCampaigns() public view returns (address[] memory) {
         address[] memory temp = new address[](campaigns.length);
         uint activeCampaignsCount = 0;
-
         for (uint i = 0; i < campaigns.length; i++) {
             if (activeCampaign[campaigns[i]]) {
                 temp[activeCampaignsCount] = campaigns[i];
                 activeCampaignsCount++;
             }
         }
-
         address[] memory activeCampaigns = new address[](activeCampaignsCount);
         for (uint i = 0; i < activeCampaignsCount; i++) {
             activeCampaigns[i] = temp[i];
