@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
-
 contract NGORegistry{
     event NGORegistered(string name, string description, address ngoAddress);
     struct NGO {
@@ -12,6 +11,7 @@ contract NGORegistry{
     mapping(address => bool) public isRegisteredNGO;
 
     function registerNGO(string memory name,string memory description) public{
+        require(!isRegisteredNGO[msg.sender],"NGO already registered");
         NGO memory newNGO = NGO(name,description,msg.sender);
         ngos.push(newNGO);
         isRegisteredNGO[msg.sender] = true;
