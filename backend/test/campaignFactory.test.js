@@ -13,7 +13,7 @@ describe("campaignFactory", function () {
     NGORegistry = await ethers.getContractFactory("NGORegistry");
     ngoRegistry = await NGORegistry.deploy(donorRegistry.target);
     await ngoRegistry.waitForDeployment();
-
+    
 
     CampaignFactory = await ethers.getContractFactory("CampaignFactory");
     campaignFactory = await CampaignFactory.deploy(ngoRegistry.target, donorRegistry.target);
@@ -35,11 +35,11 @@ describe("campaignFactory", function () {
 
     await expect(campaignFactory.connect(addr1).createCampaign("Helpful Campaign", "Campaign Description",100))
       .to.emit(campaignFactory, 'CampaignCreated')
-      .withArgs("Helpful Campaign", "Campaign Description",100, addr1.address, campaigns[0]);
+      .withArgs("Helpful Campaign", "Campaign Description",100, addr1.address);
   });
 
   it("Should not allow non-registered NGO to create a campaign", async function () {
-    await expect(campaignFactory.connect(addr2).createCampaign(1000))
+    await expect(campaignFactory.connect(addr2).createCampaign("Helpful Campaign", "Campaign Description",100))
       .to.be.revertedWith("NGO not registered");
   });
 });

@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+
 describe("donorRegistry", function () {
   let DonorRegistry, donorRegistry, owner, addr1;
 
@@ -10,13 +11,13 @@ describe("donorRegistry", function () {
   });
 
   it("Should register a donor", async function () {
-    await donorRegistry.connect(addr1).registerDonor("John Doe");
-    expect(await donorRegistry.isRegisteredDonor(addr1.target)).to.equal(true);
+    await donorRegistry.connect(addr1).registerDonor("Donor");
+    expect(await donorRegistry.isRegisteredDonor(addr1.address)).to.equal(true);
   });
 
   it("Should emit DonorRegistered event", async function () {
-    await expect(donorRegistry.connect(addr1).registerDonor("John Doe"))
+    await expect(donorRegistry.connect(addr1).registerDonor("Donor"))
       .to.emit(donorRegistry, 'DonorRegistered')
-      .withArgs(addr1.target);
+      .withArgs(addr1.address);
   });
 });
